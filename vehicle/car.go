@@ -16,7 +16,7 @@ type Car struct {
 	AssembleLog   string
 }
 
-func (c *Car) StartEngine() (string, error) {
+func (c Car) StartEngine() (string, error) {
 	if c.EngineStarted {
 		return "", fmt.Errorf("Cannot start engine already started")
 	}
@@ -24,7 +24,7 @@ func (c *Car) StartEngine() (string, error) {
 	return "Engine Started!", nil
 }
 
-func (c *Car) StopEngine() (string, error) {
+func (c Car) StopEngine() (string, error) {
 	if !c.EngineStarted {
 		return "", fmt.Errorf("Cannot stop engine already stopped")
 	}
@@ -32,7 +32,7 @@ func (c *Car) StopEngine() (string, error) {
 	return "Engine Stopped!", nil
 }
 
-func (c *Car) MoveForwards(distance int) (string, error) {
+func (c Car) MoveForwards(distance int) (string, error) {
 	if !c.EngineStarted {
 		return "", fmt.Errorf("Cannot move with stopped engine")
 	}
@@ -40,7 +40,7 @@ func (c *Car) MoveForwards(distance int) (string, error) {
 	return fmt.Sprintf("Moved forward %d meters!", distance), nil
 }
 
-func (c *Car) MoveBackwards(distance int) (string, error) {
+func (c Car) MoveBackwards(distance int) (string, error) {
 	if !c.EngineStarted {
 		return "", fmt.Errorf("Cannot move with stopped engine")
 	}
@@ -48,7 +48,7 @@ func (c *Car) MoveBackwards(distance int) (string, error) {
 	return fmt.Sprintf("Moved backwards %d meters!", distance), nil
 }
 
-func (c *Car) TurnRight() (string, error) {
+func (c Car) TurnRight() (string, error) {
 	if !c.EngineStarted {
 		return "", fmt.Errorf("Cannot turn right with stopped engine")
 	}
@@ -56,7 +56,7 @@ func (c *Car) TurnRight() (string, error) {
 	return fmt.Sprintf("Turned Right!"), nil
 }
 
-func (c *Car) TurnLeft() (string, error) {
+func (c Car) TurnLeft() (string, error) {
 	if !c.EngineStarted {
 		return "", fmt.Errorf("Cannot turn left with stopped engine")
 	}
