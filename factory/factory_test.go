@@ -4,31 +4,10 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/stretchr/testify/suite"
 	"github.com/theWando/car-factory/vehicle"
 )
 
-type factoryUnitTestSuite struct {
-	suite.Suite
-	adapter *Factory
-}
-
-func (s *factoryUnitTestSuite) SetupSuite() {
-
-	s.adapter = &Factory{}
-}
-
-func TestFactoryUnitTestSuite(t *testing.T) {
-	suite.Run(t, &factoryUnitTestSuite{})
-}
-
-func (s *factoryUnitTestSuite) TestSamble() {
-	//code here
-	// Assert
-	s.Assert().Equal(1, 1)
-}
-
-func TestFactory_generateVehicleLots(t *testing.T) {
+func Test_generateVehicleLots(t *testing.T) {
 	type args struct {
 		amountOfVehicles int
 	}
@@ -42,8 +21,7 @@ func TestFactory_generateVehicleLots(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			fa := Factory{}
-			got := fa.generateVehicleLots(tt.args.amountOfVehicles)
+			got := generateVehicleLots(tt.args.amountOfVehicles)
 			if len(got) != tt.wantLen {
 				t.Errorf("generateVehicleLots() = %d, want %d", len(got), tt.wantLen)
 			}
@@ -62,6 +40,31 @@ func TestFactory_generateVehicleLots(t *testing.T) {
 				if !reflect.DeepEqual(car, compare) {
 					t.Errorf("generateVehicleLots() = %v, want %v", got, compare)
 				}
+			}
+		})
+	}
+}
+
+func Test_testCar(t *testing.T) {
+	type args struct {
+		car vehicle.Car
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{name: "Returns the result of a functional car", args: args{car: vehicle.Car{
+			EngineStarted: false,
+		}}, want: "Engine Started!, Moved forward 10 meters!, Moved forward 10 meters!, Turned Right, Turned Right!, Engine Stopped!, "},
+		{name: "Returns the result of a al reade stated car", args: args{car: vehicle.Car{
+			EngineStarted: true,
+		}}, want: "Cannot start engine already started, Moved forward 10 meters!, Moved forward 10 meters!, Turned Right, Turned Right!, Engine Stopped!, "},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := testCar(&tt.args.car); got != tt.want {
+				t.Errorf("testCar() = %v, want %v", got, tt.want)
 			}
 		})
 	}

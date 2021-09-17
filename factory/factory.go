@@ -27,7 +27,7 @@ func New(assemblySpots int) (*Factory, error) {
 func (f Factory) StartAssemblingProcess(amountOfVehicles int, out chan vehicle.Car) {
 	defer close(out)
 	defer f.pool.Release()
-	vehicleList := f.generateVehicleLots(amountOfVehicles)
+	vehicleList := generateVehicleLots(amountOfVehicles)
 	for _, parts := range vehicleList {
 		parts := parts
 		err := f.pool.Submit(func() {
@@ -40,7 +40,7 @@ func (f Factory) StartAssemblingProcess(amountOfVehicles int, out chan vehicle.C
 				log.WithField("err", err).Error("failed to assemble vehicle")
 			}
 
-			car.TestingLog = f.testCar(&car)
+			car.TestingLog = testCar(&car)
 			car.AssembleLog = idleSpot.GetAssembledLogs()
 			out <- car
 		})
@@ -51,7 +51,7 @@ func (f Factory) StartAssemblingProcess(amountOfVehicles int, out chan vehicle.C
 	}
 }
 
-func (Factory) generateVehicleLots(amountOfVehicles int) []vehicle.Car {
+func generateVehicleLots(amountOfVehicles int) []vehicle.Car {
 	vehicles := make([]vehicle.Car, amountOfVehicles)
 
 	for i := 0; i < amountOfVehicles; i++ {
@@ -71,7 +71,7 @@ func (Factory) generateVehicleLots(amountOfVehicles int) []vehicle.Car {
 	return vehicles
 }
 
-func (f *Factory) testCar(car *vehicle.Car) string {
+func testCar(car *vehicle.Car) string {
 	logs := ""
 
 	trace, err := car.StartEngine()
