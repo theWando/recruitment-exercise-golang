@@ -40,6 +40,7 @@ func New(assemblySpots int) (*Factory, error) {
 
 func (f Factory) Assemble(amountOfVehicles int, out chan vehicle.Car) {
 	defer close(out)
+	defer f.pool.Release()
 	vehicleList := f.generateVehicleLots(amountOfVehicles)
 	for _, parts := range vehicleList {
 		parts := parts
