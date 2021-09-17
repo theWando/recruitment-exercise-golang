@@ -9,8 +9,7 @@ import (
 )
 
 type Factory struct {
-	AssemblingSpots chan *assemblyspot.AssemblySpot
-	pool            *ants.Pool
+	pool *ants.Pool
 }
 
 func New(assemblySpots int) (*Factory, error) {
@@ -19,26 +18,13 @@ func New(assemblySpots int) (*Factory, error) {
 		return nil, err
 	}
 	factory := &Factory{
-		AssemblingSpots: make(chan *assemblyspot.AssemblySpot, assemblySpots),
-		pool:            pool,
-	}
-
-	totalAssemblySpots := 0
-
-	for {
-		factory.AssemblingSpots <- &assemblyspot.AssemblySpot{}
-
-		totalAssemblySpots++
-
-		if totalAssemblySpots >= assemblySpots {
-			break
-		}
+		pool: pool,
 	}
 
 	return factory, nil
 }
 
-func (f Factory) Assemble(amountOfVehicles int, out chan vehicle.Car) {
+func (f Factory) StartAssemblingProcess(amountOfVehicles int, out chan vehicle.Car) {
 	defer close(out)
 	defer f.pool.Release()
 	vehicleList := f.generateVehicleLots(amountOfVehicles)

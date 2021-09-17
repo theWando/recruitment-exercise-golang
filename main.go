@@ -26,7 +26,7 @@ func main() {
 	//each vehicle delivered to main should display testinglogs and assemblelogs with the respective vehicle id
 
 	carChannel := make(chan vehicle.Car)
-	go app.Assemble(carsAmount, carChannel)
+	go app.StartAssemblingProcess(carsAmount, carChannel)
 	for car := range carChannel {
 		log.WithFields(map[string]interface{}{
 			"TestingLog":  car.TestingLog,
