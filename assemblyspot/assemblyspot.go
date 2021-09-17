@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	".main.go/vehicle"
+	"github.com/theWando/car-factory/vehicle"
 )
 
 type AssemblySpot struct {

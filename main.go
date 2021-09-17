@@ -1,7 +1,7 @@
 package main
 
 import (
-	".main.go/factory"
+	"github.com/theWando/car-factory/factory"
 )
 
 const carsAmount = 100

@@ -3,8 +3,8 @@ package factory
 import (
 	"fmt"
 
-	".main.go/assemblyspot"
-	".main.go/vehicle"
+	"github.com/theWando/car-factory/assemblyspot"
+	"github.com/theWando/car-factory/vehicle"
 )
 
 const assemblySpots int = 5
