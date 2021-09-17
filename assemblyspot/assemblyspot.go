@@ -8,6 +8,11 @@ import (
 	"github.com/theWando/car-factory/vehicle"
 )
 
+const (
+	layout           = "2006-01-02 15:04:05.000"
+	assembleDuration = 1 * time.Second
+)
+
 type AssemblySpot struct {
 	vehicleToAssemble *vehicle.Car
 	assemblyLog       string
@@ -44,42 +49,46 @@ func (s *AssemblySpot) AssembleVehicle() (*vehicle.Car, error) {
 
 func (s *AssemblySpot) assembleChassis() {
 	s.vehicleToAssemble.Chassis = "Assembled"
-	time.Sleep(1 * time.Second)
-	s.assemblyLog += fmt.Sprintf("Chassis at [%s], ", time.Now().Format("2006-01-02 15:04:05.000"))
+	time.Sleep(assembleDuration)
+	s.assemblyLog += fmt.Sprintf("Chassis at [%s], ", getNow())
 }
 
 func (s *AssemblySpot) assembleTires() {
 	s.vehicleToAssemble.Tires = "Assembled"
-	time.Sleep(1 * time.Second)
-	s.assemblyLog += fmt.Sprintf("Tires at [%s], ", time.Now().Format("2006-01-02 15:04:05.000"))
+	time.Sleep(assembleDuration)
+	s.assemblyLog += fmt.Sprintf("Tires at [%s], ", getNow())
 }
 
 func (s *AssemblySpot) assembleEngine() {
 	s.vehicleToAssemble.Engine = "Assembled"
-	time.Sleep(1 * time.Second)
-	s.assemblyLog += fmt.Sprintf("Engine at [%s], ", time.Now().Format("2006-01-02 15:04:05.000"))
+	time.Sleep(assembleDuration)
+	s.assemblyLog += fmt.Sprintf("Engine at [%s], ", getNow())
 }
 
 func (s *AssemblySpot) assembleElectronics() {
 	s.vehicleToAssemble.Electronics = "Assembled"
-	time.Sleep(1 * time.Second)
-	s.assemblyLog += fmt.Sprintf("Electronics at [%s], ", time.Now().Format("2006-01-02 15:04:05.000"))
+	time.Sleep(assembleDuration)
+	s.assemblyLog += fmt.Sprintf("Electronics at [%s], ", getNow())
 }
 
 func (s *AssemblySpot) assembleDash() {
 	s.vehicleToAssemble.Dash = "Assembled"
-	time.Sleep(1 * time.Second)
-	s.assemblyLog += fmt.Sprintf("Dash at [%s], ", time.Now().Format("2006-01-02 15:04:05.000"))
+	time.Sleep(assembleDuration)
+	s.assemblyLog += fmt.Sprintf("Dash at [%s], ", getNow())
 }
 
 func (s *AssemblySpot) assembleSeats() {
 	s.vehicleToAssemble.Sits = "Assembled"
-	time.Sleep(1 * time.Second)
-	s.assemblyLog += fmt.Sprintf("Sits at [%s], ", time.Now().Format("2006-01-02 15:04:05.000"))
+	time.Sleep(assembleDuration)
+	s.assemblyLog += fmt.Sprintf("Sits at [%s], ", getNow())
 }
 
 func (s *AssemblySpot) assembleWindows() {
 	s.vehicleToAssemble.Windows = "Assembled"
-	time.Sleep(1 * time.Second)
-	s.assemblyLog += fmt.Sprintf("Windows at [%s], ", time.Now().Format("2006-01-02 15:04:05.000"))
+	time.Sleep(assembleDuration)
+	s.assemblyLog += fmt.Sprintf("Windows at [%s], ", getNow())
+}
+
+func getNow() string {
+	return time.Now().Format(layout)
 }
