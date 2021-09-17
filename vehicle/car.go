@@ -16,19 +16,21 @@ type Car struct {
 	AssembleLog   string
 }
 
-func (c Car) StartEngine() (string, error) {
+func (c *Car) StartEngine() (string, error) {
 	if c.EngineStarted {
 		return "", fmt.Errorf("Cannot start engine already started")
 	}
 
+	c.EngineStarted = true
 	return "Engine Started!", nil
 }
 
-func (c Car) StopEngine() (string, error) {
+func (c *Car) StopEngine() (string, error) {
 	if !c.EngineStarted {
 		return "", fmt.Errorf("Cannot stop engine already stopped")
 	}
 
+	c.EngineStarted = false
 	return "Engine Stopped!", nil
 }
 
