@@ -13,7 +13,12 @@ type Factory struct {
 }
 
 func New(assemblySpots int) (*Factory, error) {
-	pool, err := ants.NewPool(assemblySpots)
+	pool, err := ants.NewPool(assemblySpots, func(opts *ants.Options) {
+		opts.Logger = log.StandardLogger()
+		opts.PanicHandler = func(i interface{}) {
+			log.WithField("error", i).Errorf("received panic from factory")
+		}
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -27,28 +32,44 @@ func New(assemblySpots int) (*Factory, error) {
 func (f Factory) StartAssemblingProcess(amountOfVehicles int, out chan vehicle.Car) {
 	defer close(out)
 	defer f.pool.Release()
-	vehicleList := generateVehicleLots(amountOfVehicles)
-	for _, parts := range vehicleList {
-		parts := parts
+	for i := 0; i < amountOfVehicles; i++ {
+		serial := i
 		err := f.pool.Submit(func() {
-			var idleSpot assemblyspot.AssemblySpot
-			log.WithField("ID", parts.Id).Info("Assembling vehicle...")
-			idleSpot.SetVehicle(&parts)
-			car, err := idleSpot.AssembleVehicle()
-
-			if err != nil {
-				log.WithField("err", err).Error("failed to assemble vehicle")
-			}
-
-			car.TestingLog = testCar(&car)
-			car.AssembleLog = idleSpot.GetAssembledLogs()
+			car, _ := assembleVehicle(serial)
 			out <- car
 		})
 		if err != nil {
-			log.Error(err)
-			break
+			return
 		}
 	}
+}
+
+func assembleVehicle(serial int) (vehicle.Car, error) {
+	const notSet = "NotSet"
+	var spot assemblyspot.AssemblySpot
+	log.WithField("ID", serial).Info("Assembling vehicle...")
+	spot.SetVehicle(vehicle.Car{
+		Id:            serial,
+		Chassis:       notSet,
+		Tires:         notSet,
+		Engine:        notSet,
+		Electronics:   notSet,
+		Dash:          notSet,
+		Sits:          notSet,
+		Windows:       notSet,
+		EngineStarted: false,
+	})
+
+	err := spot.AssembleVehicle()
+	if err != nil {
+		log.WithField("err", err).Error("failed to assemble vehicle")
+		return vehicle.Car{}, err
+	}
+
+	car := spot.GetAssembledVehicle()
+	car.TestingLog = testCar(car)
+	car.AssembleLog = spot.GetAssembledLogs()
+	return car, nil
 }
 
 func generateVehicleLots(amountOfVehicles int) []vehicle.Car {
@@ -71,7 +92,7 @@ func generateVehicleLots(amountOfVehicles int) []vehicle.Car {
 	return vehicles
 }
 
-func testCar(car *vehicle.Car) string {
+func testCar(car vehicle.Car) string {
 	logs := ""
 
 	trace, err := car.StartEngine()
