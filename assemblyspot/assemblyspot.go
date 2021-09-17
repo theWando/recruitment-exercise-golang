@@ -31,9 +31,9 @@ func (s *AssemblySpot) GetAssembledLogs() string {
 }
 
 //hint: improve this function to execute this process concurrenlty
-func (s *AssemblySpot) AssembleVehicle() (*vehicle.Car, error) {
+func (s *AssemblySpot) AssembleVehicle() (vehicle.Car, error) {
 	if s.vehicleToAssemble == nil {
-		return nil, errors.New("no vehicle set to start assembling")
+		return vehicle.Car{}, errors.New("no vehicle set to start assembling")
 	}
 
 	s.assembleChassis()
@@ -44,7 +44,7 @@ func (s *AssemblySpot) AssembleVehicle() (*vehicle.Car, error) {
 	s.assembleSeats()
 	s.assembleWindows()
 
-	return s.vehicleToAssemble, nil
+	return *s.vehicleToAssemble, nil
 }
 
 func (s *AssemblySpot) assembleChassis() {

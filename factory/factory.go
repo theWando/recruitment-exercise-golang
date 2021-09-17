@@ -1,21 +1,26 @@
 package factory
 
 import (
-	"fmt"
+	"github.com/panjf2000/ants/v2"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/theWando/car-factory/assemblyspot"
 	"github.com/theWando/car-factory/vehicle"
 )
 
-const assemblySpots int = 5
-
 type Factory struct {
 	AssemblingSpots chan *assemblyspot.AssemblySpot
+	pool            *ants.Pool
 }
 
-func New() *Factory {
+func New(assemblySpots int) (*Factory, error) {
+	pool, err := ants.NewPool(assemblySpots)
+	if err != nil {
+		return nil, err
+	}
 	factory := &Factory{
 		AssemblingSpots: make(chan *assemblyspot.AssemblySpot, assemblySpots),
+		pool:            pool,
 	}
 
 	totalAssemblySpots := 0
@@ -30,30 +35,32 @@ func New() *Factory {
 		}
 	}
 
-	return factory
+	return factory, nil
 }
 
-//HINT: this function is currently not returning anything, make it return right away every single vehicle once assembled,
-//(Do not wait for all of them to be assembled to return them all, send each one ready over to main)
-func (f *Factory) StartAssemblingProcess(amountOfVehicles int) {
+func (f Factory) Assemble(amountOfVehicles int, out chan vehicle.Car) {
+	defer close(out)
 	vehicleList := f.generateVehicleLots(amountOfVehicles)
+	for _, parts := range vehicleList {
+		parts := parts
+		err := f.pool.Submit(func() {
+			var idleSpot assemblyspot.AssemblySpot
+			log.WithField("ID", parts.Id).Info("Assembling vehicle...")
+			idleSpot.SetVehicle(&parts)
+			car, err := idleSpot.AssembleVehicle()
 
-	for _, car := range vehicleList {
-		fmt.Println("Assembling vehicle...")
+			if err != nil {
+				log.WithField("err", err).Error("failed to assemble vehicle")
+			}
 
-		idleSpot := <-f.AssemblingSpots
-		idleSpot.SetVehicle(&car)
-		car, err := idleSpot.AssembleVehicle()
-
+			car.TestingLog = f.testCar(&car)
+			car.AssembleLog = idleSpot.GetAssembledLogs()
+			out <- car
+		})
 		if err != nil {
-			continue
+			log.Error(err)
+			break
 		}
-
-		car.TestingLog = f.testCar(car)
-		car.AssembleLog = idleSpot.GetAssembledLogs()
-
-		idleSpot.SetVehicle(nil)
-		f.AssemblingSpots <- idleSpot
 	}
 }
 
@@ -87,44 +94,44 @@ func (Factory) generateVehicleLots(amountOfVehicles int) []vehicle.Car {
 func (f *Factory) testCar(car *vehicle.Car) string {
 	logs := ""
 
-	log, err := car.StartEngine()
+	trace, err := car.StartEngine()
 	if err == nil {
-		logs += log + ", "
+		logs += trace + ", "
 	} else {
 		logs += err.Error() + ", "
 	}
 
-	log, err = car.MoveForwards(10)
+	trace, err = car.MoveForwards(10)
 	if err == nil {
-		logs += log + ", "
+		logs += trace + ", "
 	} else {
 		logs += err.Error() + ", "
 	}
 
-	log, err = car.MoveForwards(10)
+	trace, err = car.MoveForwards(10)
 	if err == nil {
-		logs += log + ", "
+		logs += trace + ", "
 	} else {
 		logs += err.Error() + ", "
 	}
 
-	log, err = car.TurnLeft()
+	trace, err = car.TurnLeft()
 	if err == nil {
-		logs += log + ", "
+		logs += trace + ", "
 	} else {
 		logs += err.Error() + ", "
 	}
 
-	log, err = car.TurnRight()
+	trace, err = car.TurnRight()
 	if err == nil {
-		logs += log + ", "
+		logs += trace + ", "
 	} else {
 		logs += err.Error() + ", "
 	}
 
-	log, err = car.StopEngine()
+	trace, err = car.StopEngine()
 	if err == nil {
-		logs += log + ", "
+		logs += trace + ", "
 	} else {
 		logs += err.Error() + ", "
 	}
