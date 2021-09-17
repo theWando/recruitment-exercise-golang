@@ -1,8 +1,8 @@
 Before Starting:
-Copy this proyect into your personal git account and commit before making any changes. We want to see the history of all commits you do.
+Copy this project into your personal git account and commit before making any changes. We want to see the history of all commits you do.
 
-Proyect Description:
-This appliction emulates a factory that assembles cars. This is a small factory with 5 spots only, meaning it could assemble up to 5 cars at the same time. 
+Project Description:
+This application emulates a factory that assembles cars. This is a small factory with 5 spots only, meaning it could assemble up to 5 cars at the same time. 
 If all spots are busy at a certain moment, no new cars can be done until one spot idles. Every single car part takes one second to be assembled so the 
 total assemble time could take up to 7s. if you run this app now you will see a console message "Assembling vehicle..." every 7 seconds. Meaning every 7
 seconds a new car is assembled, we should assemble 5 cars every 7 seconds instead.

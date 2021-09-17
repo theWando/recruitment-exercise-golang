@@ -38,19 +38,19 @@ func New() *Factory {
 func (f *Factory) StartAssemblingProcess(amountOfVehicles int) {
 	vehicleList := f.generateVehicleLots(amountOfVehicles)
 
-	for _, vehicle := range vehicleList {
+	for _, car := range vehicleList {
 		fmt.Println("Assembling vehicle...")
 
 		idleSpot := <-f.AssemblingSpots
-		idleSpot.SetVehicle(&vehicle)
-		vehicle, err := idleSpot.AssembleVehicle()
+		idleSpot.SetVehicle(&car)
+		car, err := idleSpot.AssembleVehicle()
 
 		if err != nil {
 			continue
 		}
 
-		vehicle.TestingLog = f.testCar(vehicle)
-		vehicle.AssembleLog = idleSpot.GetAssembledLogs()
+		car.TestingLog = f.testCar(car)
+		car.AssembleLog = idleSpot.GetAssembledLogs()
 
 		idleSpot.SetVehicle(nil)
 		f.AssemblingSpots <- idleSpot
@@ -58,7 +58,7 @@ func (f *Factory) StartAssemblingProcess(amountOfVehicles int) {
 }
 
 func (Factory) generateVehicleLots(amountOfVehicles int) []vehicle.Car {
-	var vehicles = []vehicle.Car{}
+	var vehicles []vehicle.Car
 	var index = 0
 
 	for {
